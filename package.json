@@ -1,0 +1,24 @@
+{
+  "name": "eslint-todo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-typescript": "^7.7.2",
+    "@rauschma/stringio": "^1.4.0",
+    "concat-stream": "^2.0.0",
+    "install": "^0.13.0",
+    "jest": "^24.9.0",
+    "mock-fs": "^4.10.3",
+    "npm": "^6.13.1",
+    "typescript": "^3.7.2"
+  }
+}
