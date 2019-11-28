@@ -7,8 +7,7 @@ function createProcess(processPath, args = [], opts = {}) {
   const concatedArgs = [processPath].concat(args);
 
   const child = spawn('node', concatedArgs, opts);
-  console.log('writing to child stdin', opts.stdin);
-  
+
   child.stdin.write(opts.stdin);
 
   child.stdin.end();

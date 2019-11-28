@@ -1,34 +1,43 @@
 import {
   execute
 } from './support/cmd';
-
-// import path from 'path'
+import fs from 'fs'
+import path from 'path'
+import mockFs from 'mock-fs'
 
 import {
   spawn
 } from 'child_process';
 
+const fixturesPath = './__tests__/support/fixtures'
 describe('cli', () => {
+
+  afterAll(() => {
+    mockFs.restore()
+  })
   describe('no todo found', () => {
     it('creates a todo', async () => {
 
-      const output = await execute('./build/index.js', [], {
-        stdin: 'hello world'
-      })
-      console.log(output);
+      const lintResults = fs.readFileSync(
+        path.resolve(fixturesPath,
+          'errors.txt'),
+        'utf-8'
+      );
 
-      expect(output).toEqual('hello world')
+      const expectedTodo = fs.readFileSync(
+        path.resolve(fixturesPath,
+          'todo.yml'),
+        'utf-8'
+      );
 
-      // const child = spawn('node', ['./build/index.js']);
-      // child.stdin.setEncoding('utf-8');
-      // child.stdout.pipe(process.stdout);
+      mockFs();
 
-      // child.stdin.write("a\nb\nc");
+      await execute('./build/index.js', [], {
+        stdin: lintResults
+      });
 
-      // child.stdin.end();
-      // recieves error output as stdin
-      // creates todo
-      // exit 0
+      const actualTodo = fs.readFileSync('eslint-todo.yml', 'utf-8')
+      expect(actualTodo).toEqual(expectedTodo);
     });
   });
 });
