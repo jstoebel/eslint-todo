@@ -1,6 +1,4 @@
-import {
-  Report
-} from '../src/report'
+import Report from '../src/report'
 
 const message1 = {
   ruleId: 'no-unused-vars',
@@ -28,13 +26,22 @@ const message2 = {
 
 describe('Report', () => {
   test('creates a new error from input', () => {
+    console.log(Report);
+
     const report = new Report();
     report.addMessage(message1, '/path/to/file')
-
     
+    const result = report.output();
+
+    expect(result).toEqual({
+      'no-unused-vars': {
+        count: 1,
+        files: ['/path/to/file']
+      }
+    })
   })
 
-  test('adds to an existing error from input', () => [
+  xtest('adds to an existing error from input', () => {
 
-  ])
+  })
 })
