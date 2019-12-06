@@ -1,8 +1,5 @@
 import readline from 'readline';
-
-// console.log(
-//     'hello from index'
-// );
+import {IFile} from 'types'
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -11,5 +8,13 @@ const rl = readline.createInterface({
 });
 
 rl.on('line', (line) => {
-    process.stdout.write(line);
+    const data = JSON.parse(line)
+
+    const errorCollection = new errorCollection();
+
+    data.forEach((file: IFile) => {
+        const file = new File(file.filePath)
+
+
+    })
 })
