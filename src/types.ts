@@ -13,3 +13,12 @@ export interface IMessage {
   endLine: number,
   endColumn: number
 }
+
+export interface IErrorReport {
+  count: number,
+  files: string[]
+}
+
+export interface IFullReport {
+  [ruleId: string]: IErrorReport
+}

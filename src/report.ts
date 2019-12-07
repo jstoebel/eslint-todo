@@ -3,31 +3,43 @@
  *    -> creates a new error object or adds to an existing one. 
  */
 
-import { IMessage } from 'types'
+import { IMessage, IErrorReport, IFullReport } from 'types'
+import _ from 'lodash'
 
 export default class Report {
 
     messages: {
-      [key: string]: MessageType
+      [key: string]: MessageGroup
     };
 
     constructor() {
         this.messages = {}
     }
 
-    addMessage(message: IMessage, filePath: string) {
+    addMessage(message: IMessage, filePath: string): void {
 
       const {ruleId} = message
-      const messageType = this.messages[ruleId] || new MessageType(ruleId)
+      const messageGroup = this.messages[ruleId] || new MessageGroup(ruleId)
+      messageGroup.addInstance(filePath)
 
-      messageType.addInstance(filePath)
+      this.messages[ruleId] = messageGroup;
+    }
+
+    /**
+     * return a full todo report as an object
+     */
+    output(): IFullReport {
+      return _.transform(this.messages, (result, value, key) => {
+        result[key] = value.output()
+      }, {} as IFullReport )
+
     }
 }
 
 /**
- * represents a message type in aggregate
+ * represents a error type in aggregate
  */
-class MessageType {
+class MessageGroup {
 
   ruleId: string
   errorCount: number;
@@ -49,5 +61,15 @@ class MessageType {
     // don't store duplicates of the same file
     if (this.files.includes(file)) return;
     this.files.push(file)
+  }
+
+  /**
+   * report for this individual error type
+   */
+  output(): IErrorReport {
+    return {
+      count: this.errorCount,
+      files: this.files
+    }
   }
 }

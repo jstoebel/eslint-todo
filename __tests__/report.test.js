@@ -1,4 +1,4 @@
-import Report from '../src/report'
+import Report from '../src/report';
 
 const message1 = {
   ruleId: 'no-unused-vars',
@@ -9,7 +9,7 @@ const message1 = {
   nodeType: 'Identifier',
   endLine: 1,
   endColumn: 16
-}
+};
 
 const message2 = {
   ruleId: 'use-isnan',
@@ -21,16 +21,13 @@ const message2 = {
   messageId: 'comparisonWithNaN',
   endLine: 2,
   endColumn: 17
-}
-
+};
 
 describe('Report', () => {
   test('creates a new error from input', () => {
-    console.log(Report);
-
     const report = new Report();
-    report.addMessage(message1, '/path/to/file')
-    
+    report.addMessage(message1, '/path/to/file');
+
     const result = report.output();
 
     expect(result).toEqual({
@@ -38,10 +35,20 @@ describe('Report', () => {
         count: 1,
         files: ['/path/to/file']
       }
-    })
-  })
+    });
+  });
 
-  xtest('adds to an existing error from input', () => {
+  test('adds to an existing error from input', () => {
+    const report = new Report();
+    report.addMessage(message1, '/path/to/file');
+    report.addMessage(message1, '/path/to/another/file');
+    const result = report.output();
 
-  })
-})
+    expect(result).toEqual({
+      'no-unused-vars': {
+        count: 2,
+        files: ['/path/to/file', '/path/to/another/file']
+      }
+    });
+  });
+});
