@@ -5,11 +5,11 @@ import fs from 'fs'
 import path from 'path'
 import mockFs from 'mock-fs'
 
-import {
-  spawn
-} from 'child_process';
-
 const fixturesPath = './__tests__/support/fixtures'
+
+const errorsPath = path.resolve(fixturesPath, 'errors.txt')
+const eslintTodoDotJson = 'eslint-todo.json'
+const todoPath = path.resolve(fixturesPath, eslintTodoDotJson)
 describe('cli', () => {
 
   afterAll(() => {
@@ -19,25 +19,25 @@ describe('cli', () => {
     it('creates a todo', async () => {
 
       const lintResults = fs.readFileSync(
-        path.resolve(fixturesPath,
-          'errors.txt'),
+        errorsPath,
         'utf-8'
       );
+
 
       const expectedTodo = fs.readFileSync(
-        path.resolve(fixturesPath,
-          'todo.yml'),
+        todoPath,
         'utf-8'
       );
 
-      mockFs();
+      // mockFs();
 
       await execute('./build/index.js', [], {
         stdin: lintResults
       });
 
-      const actualTodo = fs.readFileSync('eslint-todo.yml', 'utf-8')
+      const actualTodo = fs.readFileSync(eslintTodoDotJson, 'utf-8')
       expect(actualTodo).toEqual(expectedTodo);
+      fs.unlinkSync(eslintTodoDotJson)
     });
   });
 });

@@ -1,7 +1,7 @@
 import readline from 'readline';
 import { IFile, IMessage } from 'types';
-import Report from 'report';
-import YAML from 'json2yaml';
+import fs from 'fs';
+import Report from './report';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -20,5 +20,6 @@ rl.on('line', line => {
     });
   });
 
-  // save data to file
+  const output = report.output();
+  fs.writeFileSync('eslint-todo.json', JSON.stringify(output), 'utf-8');
 });
