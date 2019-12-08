@@ -28,17 +28,35 @@ export function execute(processPath, args = [], opts = {}) {
   childProcess.stdin.setEncoding('utf-8');
 
   const promise = new Promise((resolve, reject) => {
+
+    let msg;
     childProcess.stderr.once('data', err => {
-      reject(err.toString());
+      msg = err.toString()
+      // reject({msg: err.toString(), success: false});
     });
 
-    childProcess.on('error', reject);
+    // childProcess.on('error', reject);
 
     childProcess.stdout.pipe(
       concat(result => {
-        resolve(result.toString());
+        msg = result.toString();
+        // resolve();
       })
     );
+
+    childProcess.on('close', () => {
+      resolve({
+        msg,
+        success: true
+      })
+    })
+
+    childProcess.on('error', () => {
+      reject({
+        msg,
+        success: false
+      })
+    })
   });
 
   return promise;
