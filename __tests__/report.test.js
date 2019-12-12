@@ -72,4 +72,54 @@ describe('Report', () => {
       })
     })
   })
+
+  describe('.isWorseThan', () => {
+    test('returns true when any error ID has a larger count', async () => {
+      const report1 = new Report();
+      report1.add_message_group('some-error', {
+        count: 1,
+        files: ['some-file.js']
+      })
+
+      const report2 = new Report();
+      report2.add_message_group('some-error', {
+        count: 2,
+        files: ['some-file.js']
+      });
+
+      expect(report2.isWorseThan(report1)).toBeTruthy();
+    })
+
+    test('returns true when new report has a brand new errorId', async () => {
+      const report1 = new Report();
+      report1.add_message_group('some-error', {
+        count: 1,
+        files: ['some-file.js']
+      })
+
+      const report2 = new Report();
+      report2.add_message_group('some-other-error', {
+        count: 1,
+        files: ['some-file.js']
+      });
+
+      expect(report2.isWorseThan(report1)).toBeTruthy();
+    })
+
+    test('returns true when any error ID errors in any new file', async () => {
+      const report1 = new Report();
+      report1.add_message_group('some-error', {
+        count: 1,
+        files: ['some-file.js']
+      })
+
+      const report2 = new Report();
+      report2.add_message_group('some-error', {
+        count: 1,
+        files: ['some-other-file.js']
+      });
+
+      expect(report2.isWorseThan(report1)).toBeTruthy();
+    })
+  })
 });
