@@ -21,5 +21,11 @@ rl.on('line', line => {
   });
 
   const output = report.output();
+
+  // does todo exist? 
+    // yes -> is current worse than older?
+      // emit error
+    // no -> rewrite todo
+  // otherwise
   fs.writeFileSync('eslint-todo.json', JSON.stringify(output), 'utf-8');
 });

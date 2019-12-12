@@ -13,12 +13,14 @@ const fixturesPath = './__tests__/support/fixtures';
 
 const errorsPath = path.resolve(fixturesPath, 'errors.txt');
 const errorsBetterPath = path.resolve(fixturesPath, 'errors_better.txt')
+const errorsWorsePath = path.resolve(fixturesPath, 'errors_worse.txt')
 
 const eslintTodoDotJson = 'eslint-todo.json';
 const todoPath = path.resolve(fixturesPath, eslintTodoDotJson);
 describe('cli', () => {
+  let childProcessResult;
   afterAll(() => {
-    mockFs.restore();
+    fs.unlinkSync(eslintTodoDotJson);
   });
   describe('no todo found', () => {
     it('creates a todo', async () => {
@@ -32,7 +34,6 @@ describe('cli', () => {
 
       const actualTodo = fs.readFileSync(eslintTodoDotJson, 'utf-8');
       expect(actualTodo).toEqual(expectedTodo);
-      fs.unlinkSync(eslintTodoDotJson);
     });
   });
 
@@ -47,19 +48,10 @@ describe('cli', () => {
          * call cli
          */
 
-        fs.copyFile(todoPath, eslintTodoDotJson, err => {
-          if (err) throw err;
-        });
+        copyTodoToRoot(todoPath)
 
         const errors = await readFile(errorsBetterPath, 'utf-8');
         const errorsData = JSON.parse(errors);
-
-        const expectedNewTodo = await readFile(todoPath);
-
-        const expectedNewTodoObj = _.transform(JSON.parse(expectedNewTodo), (result, value, key) => {
-          if (key === 'no-unused-vars') return;
-          result[key] = value;
-        }, {})
 
         childProcessResult = await execute('./build/index.js', [], {
           stdin: JSON.stringify(errorsData)
@@ -72,12 +64,24 @@ describe('cli', () => {
 
 
       it('updates todo', () => {
-        
+
+        // const expectedTodo = await readFile(todo)
       });
     });
 
     describe('some area has more errors', () => {
-      it('displays error message', () => {
+      beforeEach(async () => {
+        copyTodoToRoot(todoPath)
+
+        const errors = await readFile(errorsWorsePath, 'utf-8');
+
+        childProcessResult = await execute('./build/index.js', [], {
+          stdin: errors
+        });
+      })
+
+      it('displays error message', async () => {
+
         /**
          * copy todo to root
          * grab errors.txt -> parse
@@ -86,7 +90,20 @@ describe('cli', () => {
          */
       });
 
-      it('exists with 1', () => {});
+      it('exists with 1', async () => {
+        expect(childProcessResult.success).toBeFalsy()
+      });
     });
   });
 });
+
+/**
+ * 
+ * @param {string} filePath - path of file
+ * file is copied to root
+ */
+function copyTodoToRoot(filePath) {
+  fs.copyFile(filePath, eslintTodoDotJson, err => {
+    if (err) throw err;
+  });
+}
