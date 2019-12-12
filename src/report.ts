@@ -26,6 +26,19 @@ export default class Report {
     }
 
     /**
+     * 
+     * @param groupName name of the eror group
+     * @param data object containing the error count and files effected
+     */
+    add_message_group(ruleId: string, data: {count: number, files: string[]}) {
+      const messageGroup = new MessageGroup(ruleId, {
+        errorCount: data.count,
+        files: data.files
+      })
+
+      this.messages[ruleId] = messageGroup;
+    }
+    /**
      * return a full todo report as an object
      */
     output(): IFullReport {
@@ -44,11 +57,19 @@ class MessageGroup {
   ruleId: string
   errorCount: number;
   files: string[];
+  constructor(ruleId: string, data: {errorCount?: number, files?: string[]} = {} ) {
 
-  constructor(ruleId: string) {
-    this.ruleId = ruleId
-    this.errorCount = 0;
-    this.files = []
+
+    const defaultValues = {
+      errorCount: 0,
+      files: [] as string[]
+    };
+
+    const initValues = Object.assign({}, defaultValues, data)
+
+    this.ruleId = ruleId;
+    this.errorCount = initValues.errorCount;
+    this.files = initValues.files;
   }
 
   /**
