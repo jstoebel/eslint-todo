@@ -18,8 +18,9 @@ const errorsWorsePath = path.resolve(fixturesPath, 'errors_worse.txt')
 const eslintTodoDotJson = 'eslint-todo.json';
 const todoPath = path.resolve(fixturesPath, eslintTodoDotJson);
 describe('cli', () => {
-  let childProcessResult;
+  let childProcessResult; // execute handles executing our cli in a child process. It returns a promising resolving to an object which contains if the process was successful and the output message
   afterAll(() => {
+    // remove eslint-todo from root directory after each test
     fs.unlinkSync(eslintTodoDotJson);
   });
   describe('no todo found', () => {
@@ -58,12 +59,12 @@ describe('cli', () => {
         });
       })
 
-      it('exits with 0', async () => {
+      xit('exits with 0', async () => {
         expect(childProcessResult.success).toBeTruthy()
       });
 
 
-      it('updates todo', () => {
+      xit('updates todo', () => {
 
         // const expectedTodo = await readFile(todo)
       });
@@ -81,16 +82,16 @@ describe('cli', () => {
       })
 
       it('displays error message', async () => {
-
-        /**
-         * copy todo to root
-         * grab errors.txt -> parse
-         * increment an error count -> stringify
-         * call cli
-         */
+        const expectedMsg = [
+          'fullOfProblems.js',
+          ['2:10', 'error', "'addOne' is defined but never used."].join('\t'),
+          '',
+          '1 new problem was found.'
+        ].join('\n')
+        expect(childProcessResult.msg).toEqual(expectedMsg)
       });
 
-      it('exists with 1', async () => {
+      it('exits with 1', async () => {
         expect(childProcessResult.success).toBeFalsy()
       });
     });

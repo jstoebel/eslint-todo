@@ -53,13 +53,12 @@ export default class Report {
      * @param olderReport another Report instance
      * r
      */
-    isWorseThan(olderReport: Report): boolean {
+    isWorseThan(olderData: IFullReport): boolean {
         /**
          * for each ruleId in `other` it must exist in `this` 
          * erorr count of other must be equal to or smaller than error count in `this`
          */
 
-        const olderData = olderReport.output();
         const currentData = this.output();
 
         // return an array of booleans, each representing if a specific rule got worse (true) or not
@@ -69,7 +68,7 @@ export default class Report {
             const currentRule = currentData[ruleId];
 
             if (!olderRule) return true; // if older report didn't have that error at all, return false
-            
+
             // if currentRule has files not found in olderRule
             if (_.difference(currentRule.files, olderRule.files).length) return true;
 

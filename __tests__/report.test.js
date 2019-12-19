@@ -73,53 +73,80 @@ describe('Report', () => {
     })
   })
 
-  describe('.isWorseThan', () => {
-    test('returns true when any error ID has a larger count', async () => {
-      const report1 = new Report();
-      report1.add_message_group('some-error', {
-        count: 1,
-        files: ['some-file.js']
-      })
+  // describe('.isWorseThan', () => {
+  //   test('returns true when any error ID has a larger count', async () => {
+  //     const report1 = new Report();
+  //     report1.add_message_group('some-error', {
+  //       count: 1,
+  //       files: ['some-file.js']
+  //     })
 
-      const report2 = new Report();
-      report2.add_message_group('some-error', {
+  //     const report2 = new Report();
+  //     report2.add_message_group('some-error', {
+  //       count: 2,
+  //       files: ['some-file.js']
+  //     });
+
+  //     expect(report2.isWorseThan(report1)).toBeTruthy();
+  //   })
+
+  //   test('returns true when new report has a brand new errorId', async () => {
+  //     const report1 = new Report();
+  //     report1.add_message_group('some-error', {
+  //       count: 1,
+  //       files: ['some-file.js']
+  //     })
+
+  //     const report2 = new Report();
+  //     report2.add_message_group('some-other-error', {
+  //       count: 1,
+  //       files: ['some-file.js']
+  //     });
+
+  //     expect(report2.isWorseThan(report1)).toBeTruthy();
+  //   })
+
+  //   test('returns true when any error ID errors in any new file', async () => {
+  //     const report1 = new Report();
+  //     report1.add_message_group('some-error', {
+  //       count: 1,
+  //       files: ['some-file.js']
+  //     })
+
+  //     const report2 = new Report();
+  //     report2.add_message_group('some-error', {
+  //       count: 1,
+  //       files: ['some-other-file.js']
+  //     });
+
+  //     expect(report2.isWorseThan(report1)).toBeTruthy();
+  //   })
+  // })
+
+  describe('.newErrors', () => {
+    it('returns new erors', async () => {
+      const report = new Report();
+      report.add_message_group('some-error', {
         count: 2,
-        files: ['some-file.js']
-      });
-
-      expect(report2.isWorseThan(report1)).toBeTruthy();
-    })
-
-    test('returns true when new report has a brand new errorId', async () => {
-      const report1 = new Report();
-      report1.add_message_group('some-error', {
-        count: 1,
-        files: ['some-file.js']
+        files: ['some-file.js', 'another-file.js']
       })
 
-      const report2 = new Report();
-      report2.add_message_group('some-other-error', {
-        count: 1,
-        files: ['some-file.js']
-      });
+      const olderData = {
+        'no-unused-vars': {
+          count: 1,
+          files: ['some-file.js']
+        },
+      }
 
-      expect(report2.isWorseThan(report1)).toBeTruthy();
-    })
+      const result = report1.newErrors(olderData)
 
-    test('returns true when any error ID errors in any new file', async () => {
-      const report1 = new Report();
-      report1.add_message_group('some-error', {
-        count: 1,
-        files: ['some-file.js']
+      expect(result).toEqual({
+        'no-unused-vars': {
+          additional: 1,
+          files: ['some-file.js', 'another-file.js']
+        }
       })
 
-      const report2 = new Report();
-      report2.add_message_group('some-error', {
-        count: 1,
-        files: ['some-other-file.js']
-      });
-
-      expect(report2.isWorseThan(report1)).toBeTruthy();
     })
   })
 });
